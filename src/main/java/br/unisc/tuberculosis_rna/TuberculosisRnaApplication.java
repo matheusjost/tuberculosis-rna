@@ -19,7 +19,7 @@ public class TuberculosisRnaApplication {
 	@Bean
 	public Executor taskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setThreadNamePrefix("amazondex-");
+		executor.setThreadNamePrefix("tuberculosis-rna-");
 		executor.setCorePoolSize(10);
 		executor.setMaxPoolSize(20);
 		executor.setQueueCapacity(25);
