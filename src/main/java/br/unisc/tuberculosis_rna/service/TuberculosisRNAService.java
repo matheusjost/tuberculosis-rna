@@ -3,15 +3,21 @@ package br.unisc.tuberculosis_rna.service;
 import ADReNA_API.Data.DataSet;
 import ADReNA_API.Data.DataSetObject;
 import ADReNA_API.NeuralNetwork.Backpropagation;
-import br.unisc.tuberculosis_rna.enums.TempoCuraEnum;
+import br.unisc.tuberculosis_rna.enums.*;
 import br.unisc.tuberculosis_rna.exception.TuberculosisRNAException;
 import br.unisc.tuberculosis_rna.pojo.TuberculosisRNADTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import static br.unisc.tuberculosis_rna.utils.ReaderUtils.readerParseInt;
 
 @Slf4j
 @Service
@@ -74,6 +80,53 @@ public class TuberculosisRNAService {
         }
 
         return result;
+    }
+
+    public List<TuberculosisRNADTO> parseCSVTuberculosis(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists())
+            throw new TuberculosisRNAException("Arquivo não encontrado: " + filePath);
+
+        List<TuberculosisRNADTO> tuberculosisDataList = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            boolean isHeader = true;
+            while ((line = reader.readLine()) != null) {
+                if (isHeader) {
+                    isHeader = false;
+                    continue;
+                }
+
+                String[] values = line.split(";");
+                if (values.length < 13) {
+                    log.warn("Linha ignorada devido ao número insuficiente de colunas: " + line);
+                    continue;
+                }
+
+                tuberculosisDataList.add(
+                        TuberculosisRNADTO.builder()
+                                .idade(readerParseInt(values[0].trim()))
+                                .sexo(SexoEnum.fromString(values[1].trim()))
+                                .raca(RacaEnum.fromInt(readerParseInt(values[2])))
+                                .zona(ZonaEnum.fromInt(readerParseInt(values[3])))
+                                .tipoEntrada(TipoEntradaEnum.fromInt(readerParseInt(values[4])))
+                                .radiografiaTorax(RadiografiaToraxEnum.fromInt(readerParseInt(values[5])))
+                                .formaTuberculose(FormaTuberculoseEnum.fromInt(readerParseInt(values[6])))
+                                .agravanteAIDS(AgravanteEnum.fromInt(readerParseInt(values[7])))
+                                .agravanteAlcoolismo(AgravanteEnum.fromInt(readerParseInt(values[8])))
+                                .agravanteDiabetes(AgravanteEnum.fromInt(readerParseInt(values[9])))
+                                .agravanteDoencaMental(AgravanteEnum.fromInt(readerParseInt(values[10])))
+                                .baciloscopia(BasciloscopiaEnum.fromInt(readerParseInt(values[11])))
+                                .culturaEscarro(CulturaEscarroEnum.fromInt(readerParseInt(values[12])))
+                                .build()
+                );
+            }
+
+            return tuberculosisDataList;
+        } catch (Exception e) {
+            throw new TuberculosisRNAException("Erro ao ler o arquivo CSV: " + e.getMessage());
+        }
+
     }
 
 }
