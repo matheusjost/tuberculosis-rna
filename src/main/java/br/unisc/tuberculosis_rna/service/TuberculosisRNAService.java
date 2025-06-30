@@ -28,6 +28,8 @@ public class TuberculosisRNAService {
     private final Integer OUTPUT_LAYER_SIZE = 2;
     private final Integer INPUT_LAYER_SIZE = 26;
 
+    private final String DEFAULT_CSV_HEADER = "descrIdade,CS_SEXO,CS_RACA,CS_ZONA,TRATAMENTO,RAIOX_TORA,FORMA,AGRAVAIDS,AGRAVALCOO,AGRAVDIABE,AGRAVDOENC,BACILOSC_E,CULTURA_ES,DT_INIC_TR,SITUA_ENCE,DT_ENCERRA,TEMPO_CURA";
+
     public void treinarModelo(String hashFile,
                                 int numCamadas,
                                 int tamCamada,
@@ -83,6 +85,7 @@ public class TuberculosisRNAService {
     }
 
     public List<TuberculosisRNADTO> parseCSVTuberculosis(String filePath) {
+        // TODO: might receive filePath hash
         File file = new File(filePath);
         if (!file.exists())
             throw new TuberculosisRNAException("Arquivo não encontrado: " + filePath);
@@ -94,15 +97,12 @@ public class TuberculosisRNAService {
             while ((line = reader.readLine()) != null) {
                 if (isHeader) {
                     isHeader = false;
+                    if (!line.startsWith(DEFAULT_CSV_HEADER))
+                        throw new TuberculosisRNAException("Formato do arquivo CSV inválido.");
                     continue;
                 }
 
-                String[] values = line.split(";");
-                if (values.length < 13) {
-                    log.warn("Linha ignorada devido ao número insuficiente de colunas: " + line);
-                    continue;
-                }
-
+                String[] values = line.split(",");
                 tuberculosisDataList.add(
                         TuberculosisRNADTO.builder()
                                 .idade(readerParseInt(values[0].trim()))
@@ -118,6 +118,7 @@ public class TuberculosisRNAService {
                                 .agravanteDoencaMental(AgravanteEnum.fromInt(readerParseInt(values[10])))
                                 .baciloscopia(BasciloscopiaEnum.fromInt(readerParseInt(values[11])))
                                 .culturaEscarro(CulturaEscarroEnum.fromInt(readerParseInt(values[12])))
+                                .tempoCura(TempoCuraEnum.fromDias(readerParseInt(values[16])))
                                 .build()
                 );
             }
