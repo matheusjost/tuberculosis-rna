@@ -45,9 +45,11 @@ public class TuberculosisRNAService {
 
         DataSet dadosTreino = new DataSet(INPUT_LAYER_SIZE, OUTPUT_LAYER_SIZE);
 
-        // TODO: Ler o arquivo e popular a variável dadosTreino.
-
         try {
+            List<TuberculosisRNADTO> listTreino = parseCSVTuberculosis(hashFile);
+            for (TuberculosisRNADTO treino : listTreino)
+                dadosTreino.Add(new DataSetObject(treino.getEntradaNeuronio(), treino.getSaidaNeuronio()));
+
             redeNeural.Learn(dadosTreino);
         } catch (Exception e) {
             throw new TuberculosisRNAException("Erro ao treinar a RNA: " + e.getMessage());
