@@ -3,7 +3,9 @@ package br.unisc.tuberculosis_rna.service;
 import ADReNA_API.Data.DataSet;
 import ADReNA_API.Data.DataSetObject;
 import ADReNA_API.NeuralNetwork.Backpropagation;
+import br.unisc.tuberculosis_rna.enums.TempoCuraEnum;
 import br.unisc.tuberculosis_rna.exception.TuberculosisRNAException;
+import br.unisc.tuberculosis_rna.pojo.TuberculosisRNADTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,9 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class TuberculosisRNAService {
 
-    private Backpropagation redeNeural = null;
+    private static Backpropagation redeNeural = null;
     private final Integer OUTPUT_LAYER_SIZE = 2;
-    private final Integer INPUT_LAYER_SIZE = 11;
+    private final Integer INPUT_LAYER_SIZE = 26;
 
     public void treinarModelo(String hashFile,
                                 int numCamadas,
@@ -47,16 +49,17 @@ public class TuberculosisRNAService {
         log.info("Treinamento do modelo de Tuberculose RNA concluído.");
     }
 
-    public void reconhecer() {
+    public TuberculosisRNADTO reconhecer(TuberculosisRNADTO data) {
         if (redeNeural == null)
             throw new TuberculosisRNAException("Rede neural não treinada.");
 
         try {
-            double[] result = parseRecognize(redeNeural.Recognize(new double[INPUT_LAYER_SIZE]));
+            double[] result = parseRecognize(redeNeural.Recognize(data.getEntradaNeuronio()));
 
-            // TODO: for passando pela variável result até achar a faixa correta.
+            data.setTempoCura(TempoCuraEnum.fromProbabilidade(result));
+            return data;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new TuberculosisRNAException("Erro ao reconhecer: " + e.getMessage());
         }
     }
 

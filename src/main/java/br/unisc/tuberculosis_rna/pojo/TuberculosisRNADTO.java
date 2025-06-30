@@ -2,9 +2,13 @@ package br.unisc.tuberculosis_rna.pojo;
 
 import br.unisc.tuberculosis_rna.enums.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
+import lombok.Data;
 
 import static br.unisc.tuberculosis_rna.utils.DoubleUtils.concat;
 
+@Data
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TuberculosisRNADTO {
     private int                     idade;
@@ -24,7 +28,7 @@ public class TuberculosisRNADTO {
 
     public double[] getEntradaNeuronio() {
         return concat(
-                new double[]{idade},
+                new double[]{idade / 100.0},
                 sexo.getProbabilidade(),
                 raca.getProbabilidade(),
                 zona.getProbabilidade(),
@@ -43,5 +47,4 @@ public class TuberculosisRNADTO {
     public double[] getSaidaNeuronio() {
         return this.tempoCura.getProbabilidade();
     }
-
 }

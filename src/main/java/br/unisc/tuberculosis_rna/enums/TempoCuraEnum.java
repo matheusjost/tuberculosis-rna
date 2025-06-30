@@ -3,6 +3,8 @@ package br.unisc.tuberculosis_rna.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @AllArgsConstructor
 @Getter
 public enum TempoCuraEnum {
@@ -21,6 +23,14 @@ public enum TempoCuraEnum {
             if (dias >= tempoCura.getMin() && dias <= tempoCura.getMax()) {
                 return tempoCura;
             }
+        }
+        return null;
+    }
+
+    public static TempoCuraEnum fromProbabilidade(double[] probabilidade) {
+        for (TempoCuraEnum tempoCura : TempoCuraEnum.values()) {
+            if (Arrays.equals(tempoCura.getProbabilidade(), probabilidade))
+                return tempoCura;
         }
         return null;
     }
