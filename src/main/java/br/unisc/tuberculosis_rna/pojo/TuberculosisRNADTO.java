@@ -25,6 +25,7 @@ public class TuberculosisRNADTO {
     private BasciloscopiaEnum       baciloscopia;
     private CulturaEscarroEnum      culturaEscarro;
     private TempoCuraEnum           tempoCura;
+    private double[]                saidaRecognize;
 
     public double[] getEntradaNeuronio() {
         return concat(

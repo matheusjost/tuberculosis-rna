@@ -66,8 +66,9 @@ public class TuberculosisRNAService {
             throw new TuberculosisRNAException("Rede neural não treinada.");
 
         try {
-            double[] result = parseRecognize(redeNeural.Recognize(data.getEntradaNeuronio()));
-            data.setTempoCura(TempoCuraEnum.fromProbabilidade(result));
+            double[] result = redeNeural.Recognize(data.getEntradaNeuronio());
+            data.setSaidaRecognize(result);
+            data.setTempoCura(TempoCuraEnum.fromProbabilidade(parseRecognize(result)));
             return data;
         } catch (Exception e) {
             throw new TuberculosisRNAException("Erro ao reconhecer: " + e.getMessage());
