@@ -34,3 +34,4 @@ build/
 
 .env
 application-local.properties
+TUBERCULOSE2.csv

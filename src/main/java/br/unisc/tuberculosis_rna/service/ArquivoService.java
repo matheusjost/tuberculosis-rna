@@ -3,6 +3,7 @@ package br.unisc.tuberculosis_rna.service;
 import br.unisc.tuberculosis_rna.exception.TuberculosisRNAException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,9 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class ArquivoService {
+
+    @Autowired
+    private AESEncryptionService encryptionService;
 
     @Value("${br.unisc.tuberculosis_rna.diretorio.entrada}")
     private String DIRETORIO_ENTRADA;
@@ -55,6 +59,22 @@ public class ArquivoService {
         String newFileName = fileNameWithoutExtension + "_" + timestamp + fileExtension;
 
         return DIRETORIO_ENTRADA + newFileName;
+    }
+
+    public String encryptFilePath(String filePath) {
+        try {
+            return encryptionService.encrypt(filePath);
+        } catch (Exception e) {
+            throw new TuberculosisRNAException("Erro ao criptografar o caminho do arquivo: " + e.getMessage());
+        }
+    }
+
+    public String decryptFilePath(String encryptedFilePath) {
+        try {
+            return encryptionService.decrypt(encryptedFilePath);
+        } catch (Exception e) {
+            throw new TuberculosisRNAException("Erro ao descriptografar o caminho do arquivo: " + e.getMessage());
+        }
     }
 
 }

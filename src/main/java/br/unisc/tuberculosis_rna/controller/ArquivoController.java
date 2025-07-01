@@ -1,5 +1,6 @@
 package br.unisc.tuberculosis_rna.controller;
 
+import br.unisc.tuberculosis_rna.command.TuberculosisRNACommand;
 import br.unisc.tuberculosis_rna.pojo.ApiResponseDTO;
 import br.unisc.tuberculosis_rna.service.ArquivoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/arquivo")
-public class ArquivoController extends TuberculosisRNAController {
+public class ArquivoController extends TuberculosisRNAController<TuberculosisRNACommand> {
 
     private final ArquivoService arquivoService;
 
@@ -23,9 +24,7 @@ public class ArquivoController extends TuberculosisRNAController {
     public ResponseEntity<ApiResponseDTO> upload(@RequestParam("file") MultipartFile file) {
         try {
             String path = arquivoService.armazenarArquivo(file);
-            //TODO: hash filePath to return it
-
-            return ResponseHandler.createdApiResponse(1);
+            return ResponseHandler.createdApiResponse(arquivoService.encryptFilePath(path));
         } catch (Exception e) {
             return ResponseHandler.errorApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

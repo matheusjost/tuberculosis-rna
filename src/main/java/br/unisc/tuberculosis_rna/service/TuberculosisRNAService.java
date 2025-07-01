@@ -30,7 +30,9 @@ public class TuberculosisRNAService {
 
     private final String DEFAULT_CSV_HEADER = "descrIdade,CS_SEXO,CS_RACA,CS_ZONA,TRATAMENTO,RAIOX_TORA,FORMA,AGRAVAIDS,AGRAVALCOO,AGRAVDIABE,AGRAVDOENC,BACILOSC_E,CULTURA_ES,DT_INIC_TR,SITUA_ENCE,DT_ENCERRA,TEMPO_CURA";
 
-    public void treinarModelo(String hashFile,
+    private final ArquivoService arquivoService;
+
+    public void treinarModelo(String encryptedFilePath,
                                 int numCamadas,
                                 int tamCamada,
                                 double taxaAprendizado,
@@ -48,7 +50,7 @@ public class TuberculosisRNAService {
         DataSet dadosTreino = new DataSet(INPUT_LAYER_SIZE, OUTPUT_LAYER_SIZE);
 
         try {
-            List<TuberculosisRNADTO> listTreino = parseCSVTuberculosis(hashFile);
+            List<TuberculosisRNADTO> listTreino = parseCSVTuberculosis(encryptedFilePath);
             for (TuberculosisRNADTO treino : listTreino)
                 dadosTreino.Add(new DataSetObject(treino.getEntradaNeuronio(), treino.getSaidaNeuronio()));
 
@@ -86,8 +88,9 @@ public class TuberculosisRNAService {
         return result;
     }
 
-    public List<TuberculosisRNADTO> parseCSVTuberculosis(String filePath) {
-        // TODO: might receive filePath hash
+    public List<TuberculosisRNADTO> parseCSVTuberculosis(String encryptedFilePath) {
+        String filePath = arquivoService.decryptFilePath(encryptedFilePath);
+
         File file = new File(filePath);
         if (!file.exists())
             throw new TuberculosisRNAException("Arquivo não encontrado: " + filePath);
@@ -129,7 +132,6 @@ public class TuberculosisRNAService {
         } catch (Exception e) {
             throw new TuberculosisRNAException("Erro ao ler o arquivo CSV: " + e.getMessage());
         }
-
     }
 
 }
