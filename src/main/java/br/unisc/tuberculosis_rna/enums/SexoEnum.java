@@ -1,5 +1,6 @@
 package br.unisc.tuberculosis_rna.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public enum SexoEnum {
     private final String valor;
     private final double[] probabilidade;
 
+    @JsonCreator
     public static SexoEnum fromString(String valor) {
         for (SexoEnum sexo : SexoEnum.values()) {
             if (sexo.getValor().equalsIgnoreCase(valor)) {

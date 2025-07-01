@@ -1,5 +1,6 @@
 package br.unisc.tuberculosis_rna.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,6 +18,11 @@ public enum TempoCuraEnum {
     private final int       max;
     private final String    desc;
     private final double[]  probabilidade;
+
+    @JsonValue
+    public String getDesc() {
+        return desc;
+    }
 
     public static TempoCuraEnum fromDias(int dias) {
         for (TempoCuraEnum tempoCura : TempoCuraEnum.values()) {

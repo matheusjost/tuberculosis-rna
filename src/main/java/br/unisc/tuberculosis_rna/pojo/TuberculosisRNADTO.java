@@ -11,7 +11,7 @@ import static br.unisc.tuberculosis_rna.utils.DoubleUtils.concat;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TuberculosisRNADTO {
-    private int                     idade;
+    private IdadeEnum               idade;
     private SexoEnum                sexo;
     private RacaEnum                raca;
     private ZonaEnum                zona;
@@ -28,7 +28,7 @@ public class TuberculosisRNADTO {
 
     public double[] getEntradaNeuronio() {
         return concat(
-                new double[]{idade / 100.0},
+                idade.getProbabilidade(),
                 sexo.getProbabilidade(),
                 raca.getProbabilidade(),
                 zona.getProbabilidade(),

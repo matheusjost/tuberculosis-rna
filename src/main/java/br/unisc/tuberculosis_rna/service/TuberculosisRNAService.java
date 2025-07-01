@@ -26,7 +26,7 @@ public class TuberculosisRNAService {
 
     private static Backpropagation redeNeural = null;
     private final Integer OUTPUT_LAYER_SIZE = 2;
-    private final Integer INPUT_LAYER_SIZE = 26;
+    private final Integer INPUT_LAYER_SIZE = 28;
 
     private final String DEFAULT_CSV_HEADER = "descrIdade,CS_SEXO,CS_RACA,CS_ZONA,TRATAMENTO,RAIOX_TORA,FORMA,AGRAVAIDS,AGRAVALCOO,AGRAVDIABE,AGRAVDOENC,BACILOSC_E,CULTURA_ES,DT_INIC_TR,SITUA_ENCE,DT_ENCERRA,TEMPO_CURA";
 
@@ -36,7 +36,7 @@ public class TuberculosisRNAService {
                                 int numCamadas,
                                 int tamCamada,
                                 double taxaAprendizado,
-                                int margemErro,
+                                double margemErro,
                                 int numInteracoes) {
         log.info("Treinamento do modelo de Tuberculose RNA iniciado.");
         int[] camadas = new int[numCamadas];
@@ -67,7 +67,6 @@ public class TuberculosisRNAService {
 
         try {
             double[] result = parseRecognize(redeNeural.Recognize(data.getEntradaNeuronio()));
-
             data.setTempoCura(TempoCuraEnum.fromProbabilidade(result));
             return data;
         } catch (Exception e) {
@@ -110,7 +109,7 @@ public class TuberculosisRNAService {
                 String[] values = line.split(",");
                 tuberculosisDataList.add(
                         TuberculosisRNADTO.builder()
-                                .idade(readerParseInt(values[0].trim()))
+                                .idade(IdadeEnum.fromAnos(readerParseInt(values[0])))
                                 .sexo(SexoEnum.fromString(values[1].trim()))
                                 .raca(RacaEnum.fromInt(readerParseInt(values[2])))
                                 .zona(ZonaEnum.fromInt(readerParseInt(values[3])))

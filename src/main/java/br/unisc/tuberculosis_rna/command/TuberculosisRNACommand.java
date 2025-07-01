@@ -4,5 +4,5 @@ public record TuberculosisRNACommand(String encryptedFilePath,
                                      int numCamadas,
                                      int tamCamada,
                                      double taxaAprendizado,
-                                     int margemErro,
+                                     double margemErro,
                                      int numInteracoes) {}
