@@ -46,6 +46,7 @@ public class TuberculosisRNADTO {
     }
 
     public double[] getSaidaNeuronio() {
+        // return this.tempoCura.getProbabilidade();
         return new double[]{(double) this.tempoCura / 10000};
     }
 }
