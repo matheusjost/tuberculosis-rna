@@ -25,8 +25,8 @@ import static br.unisc.tuberculosis_rna.utils.ReaderUtils.readerParseInt;
 public class TuberculosisRNAService {
 
     private static Backpropagation redeNeural = null;
-    private final Integer OUTPUT_LAYER_SIZE = 2;
-    private final Integer INPUT_LAYER_SIZE = 28;
+    private final Integer OUTPUT_LAYER_SIZE = 1;
+    private final Integer INPUT_LAYER_SIZE = 27;
 
     private final String DEFAULT_CSV_HEADER = "descrIdade,CS_SEXO,CS_RACA,CS_ZONA,TRATAMENTO,RAIOX_TORA,FORMA,AGRAVAIDS,AGRAVALCOO,AGRAVDIABE,AGRAVDOENC,BACILOSC_E,CULTURA_ES,DT_INIC_TR,SITUA_ENCE,DT_ENCERRA,TEMPO_CURA";
 
@@ -68,7 +68,7 @@ public class TuberculosisRNAService {
         try {
             double[] result = redeNeural.Recognize(data.getEntradaNeuronio());
             data.setSaidaRecognize(result);
-            data.setTempoCura(TempoCuraEnum.fromProbabilidade(parseRecognize(result)));
+            data.setTempoCura((int) Math.round(result[0] * 10000));
             return data;
         } catch (Exception e) {
             throw new TuberculosisRNAException("Erro ao reconhecer: " + e.getMessage());
@@ -110,7 +110,7 @@ public class TuberculosisRNAService {
                 String[] values = line.split(",");
                 tuberculosisDataList.add(
                         TuberculosisRNADTO.builder()
-                                .idade(IdadeEnum.fromAnos(readerParseInt(values[0])))
+                                .idade(readerParseInt(values[0]))
                                 .sexo(SexoEnum.fromString(values[1].trim()))
                                 .raca(RacaEnum.fromInt(readerParseInt(values[2])))
                                 .zona(ZonaEnum.fromInt(readerParseInt(values[3])))
@@ -123,7 +123,7 @@ public class TuberculosisRNAService {
                                 .agravanteDoencaMental(AgravanteEnum.fromInt(readerParseInt(values[10])))
                                 .baciloscopia(BasciloscopiaEnum.fromInt(readerParseInt(values[11])))
                                 .culturaEscarro(CulturaEscarroEnum.fromInt(readerParseInt(values[12])))
-                                .tempoCura(TempoCuraEnum.fromDias(readerParseInt(values[16])))
+                                .tempoCura(readerParseInt(values[16]))
                                 .build()
                 );
             }
